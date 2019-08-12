@@ -68,18 +68,18 @@ int main(void)
     BOARD_InitPins();
     // BOARD_BootClockFROHF48M();a
     BOARD_InitDebugConsole();
-    if (xTaskCreate(uart_task, "Uart_task", configMINIMAL_STACK_SIZE + 10, NULL, 2 NULL) != pdPASS)
+     if (xTaskCreate(uart_task, "Uart_task", configMINIMAL_STACK_SIZE + 10, NULL, tskIDLE_PRIORITY + 2 ,NULL) != pdPASS)
     {
         PRINTF("Task creation failed!.\r\n");
         while (1)
             ;
     }
-    if (xTaskCreate( vMotorTask "Motor_task", configMINIMAL_STACK_SIZE + 10, NULL, 2, NULL) != pdPASS)
-        {
-            PRINTF("Task creation failed!.\r\n");
-            while (1)
-                ;
-        }
+    if (xTaskCreate(vMotorTask, "log_task", configMINIMAL_STACK_SIZE + 166, NULL, tskIDLE_PRIORITY + 2, NULL) != pdPASS)
+       {
+           PRINTF("Task creation failed!.\r\n");
+           while (1)
+          ;
+       }
     vTaskStartScheduler();
     for (;;)
         ;
