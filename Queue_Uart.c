@@ -1,12 +1,3 @@
-/*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2017 NXP
- * All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-/* FreeRTOS kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -35,6 +26,7 @@
  * Prototypes
  ******************************************************************************/
 static void uart_task(void *pvParameters);
+static void vMotorTask(void *pvParameters);
 static QueueHandle_t R_Data = NULL;
 /*******************************************************************************
  * Code
@@ -62,7 +54,7 @@ int main(void)
 {
     /* Init board hardware. */
     /* attach 12 MHz clock to FLEXCOMM0 (debug console) */
-	 R_Data = xQueueCreate( 1, sizeof( int32_t ) );
+	 R_Data = xQueueCreate( 1, sizeof( int8_t ) );
      CLOCK_AttachClk(BOARD_DEBUG_UART_CLK_ATTACH);
 
     BOARD_InitPins();
@@ -120,7 +112,9 @@ static void uart_task(void *pvParameters)
             //{
               //  vTaskSuspend(NULL);
             //}
+
       xQueueSend(R_Data,&recv_buffer,0);
+      printf("uart =%s\n\n",recv_buffer);
         }
        // if (n > 0)
         //{
@@ -135,11 +129,37 @@ static void uart_task(void *pvParameters)
 
 static void vMotorTask( void *pvParameters )
 {
-
+	BaseType_t xstatus;
 	int8_t Receive_Data ;
 	for(;;)
 	{
-		xQueueReceive(R_Data,&Receive_Data,0);
-		printf("Recived data =%D\n",Receive_Data );
+		xstatus = xQueueReceive(R_Data,&Receive_Data,0);
+if(xstatus == pdPASS)
+{
+		printf("Recived data =%d\n",Receive_Data );
 	}
+if (Receive_Data == 101)
+{
+	printf("e\n");
 }
+if (Receive_Data == 97)
+{
+	printf("a\n");
+}
+if (Receive_Data == 98)
+{
+	printf("b\n");
+}
+if (Receive_Data == 100)
+{
+	printf("c\n");
+}
+if (Receive_Data == 102)
+{
+	printf("d\n");
+}
+}
+}
+
+
+
