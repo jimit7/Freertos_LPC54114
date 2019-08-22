@@ -13,15 +13,30 @@
 
 #include "pin_mux.h"
 #include <stdbool.h>
+
+
+#include "fsl_sctimer.h"
+#include "fsl_gpio.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define DEMO_USART USART0
+#define DEMO_USART USART2
 #define DEMO_USART_IRQHandler FLEXCOMM0_IRQHandler
 #define DEMO_USART_IRQn FLEXCOMM0_IRQn
 /* Task priorities. */
 #define uart_task_PRIORITY (configMAX_PRIORITIES - 1)
 #define USART_NVIC_PRIO 5
+
+
+#define DEMO_FIRST_SCTIMER_OUT kSCTIMER_Out_4
+#define DEMO_SECOND_SCTIMER_OUT kSCTIMER_Out_5
+#define DEMO_THIRD_SCTIMER_OUT	kSCTIMER_Out_7
+#define DEMO_FOURTH_SCTIMER_OUT	kSCTIMER_Out_2
+ sctimer_config_t sctimerInfo;
+ sctimer_pwm_signal_param_t pwmParam;
+ uint32_t event1,event2,event3,event4,speed=60;
+ uint32_t sctimerClock;
+
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
@@ -129,8 +144,47 @@ static void uart_task(void *pvParameters)
 
 static void vMotorTask( void *pvParameters )
 {
+	
+	
 	BaseType_t xstatus;
 	int8_t Receive_Data ;
+	sctimer_config_t sctimerInfo;
+   	sctimer_pwm_signal_param_t pwmParam;
+
+   	uint32_t event1,event2,event3,event4,speed=75;
+   	uint32_t sctimerClock;
+	
+    	pwmParam.output = DEMO_FIRST_SCTIMER_OUT;
+    	pwmParam.level = kSCTIMER_HighTrue;
+    	pwmParam.dutyCyclePercent = 1;
+    	if (SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_EdgeAlignedPwm , 2400U, sctimerClock, &event1) == kStatus_Fail)
+    	{
+           return -1;
+    	}
+
+    	pwmParam.output = DEMO_SECOND_SCTIMER_OUT;
+    	pwmParam.level = kSCTIMER_HighTrue;
+       	pwmParam.dutyCyclePercent =2 ;
+       	if (SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_EdgeAlignedPwm , 2400U, sctimerClock, &event2) == kStatus_Fail)
+       	{
+       	        return -1;
+       	}
+       	pwmParam.output = DEMO_THIRD_SCTIMER_OUT;
+        pwmParam.level = kSCTIMER_HighTrue;
+        pwmParam.dutyCyclePercent = 1;
+        if (SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_EdgeAlignedPwm , 2400U, sctimerClock, &event3) == kStatus_Fail)
+        {
+              return -1;
+        }
+
+        pwmParam.output = DEMO_FOURTH_SCTIMER_OUT;
+        pwmParam.level = kSCTIMER_HighTrue;
+        pwmParam.dutyCyclePercent =2 ;
+        if (SCTIMER_SetupPwm(SCT0, &pwmParam, kSCTIMER_EdgeAlignedPwm , 2400U, sctimerClock, &event4) == kStatus_Fail)
+        {
+          	        return -1;
+        }
+
 	for(;;)
 	{
 		xstatus = xQueueReceive(R_Data,&Receive_Data,0);
@@ -140,24 +194,59 @@ if(xstatus == pdPASS)
 	}
 if (Receive_Data == 101)
 {
-	printf("e\n");
+	printf("Rotate on axis\n");
+                	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT, 65, event1);
+                	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,1, event2);
+                	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, 1, event3);
+                	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT,65, event4);
+
 }
 if (Receive_Data == 97)
 {
-	printf("a\n");
+	printf("right\n");
+        	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT, speed, event1);
+        	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,1, event2);
+        	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, 1, event3);
+        	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT,1, event4);
 }
 if (Receive_Data == 98)
 {
-	printf("b\n");
+	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT, 1, event1);
+    	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT, 1, event2);
+    	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, speed, event3);
+    	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT, 1, event4);
+
+    	   printf("left\n");
 }
 if (Receive_Data == 100)
 {
-	printf("c\n");
+	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT,speed, event1);
+       	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,1, event2);
+        SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, speed, event3);
+       	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT, 1, event4);
+
+        	printf("go straight\n");
 }
 if (Receive_Data == 102)
 {
-	printf("d\n");
+	printf("stop");
+        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT, 1, event1);
+        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT, 1, event2);
+        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, 1, event3);
+        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT, 1, event4);
+
 }
+		
+		if(Receive_Data == 102)
+        {
+        	printf("reverse");
+        
+        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT, 1, event1);
+        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,speed, event2);
+        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, 1, event3);
+        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT,speed, event4);
+
+        }
 }
 }
 
