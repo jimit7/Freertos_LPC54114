@@ -54,6 +54,7 @@ struct rtos_usart_config usart_config = {
 #define DEMO_SECOND_SCTIMER_OUT kSCTIMER_Out_5
 #define DEMO_THIRD_SCTIMER_OUT	kSCTIMER_Out_7
 #define DEMO_FOURTH_SCTIMER_OUT	kSCTIMER_Out_2
+#define SCTIMER_CLK_FREQ CLOCK_GetFreq(kCLOCK_BusClk)
 sctimer_config_t sctimerInfo;
  sctimer_pwm_signal_param_t pwmParam;
  uint32_t event1,event2,event3,event4,speed=60;
