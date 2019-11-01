@@ -134,13 +134,7 @@ static void uart_task(void *pvParameters)
       xQueueSend(R_Data,&recv_buffer,0);
       printf("uart =%s\n\n",recv_buffer);
         }
-       // if (n > 0)
-        //{
-            /* send back the received data */
-           // USART_RTOS_Send(&handle, (uint8_t *)recv_buffer, n);
-        //}
-  //  } //while (kStatus_Success == error);
-
+  
     USART_RTOS_Deinit(&handle);
     vTaskSuspend(NULL);
 }
