@@ -211,7 +211,7 @@ if (Receive_Data == 97)
 	    	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT, speed, event3);
 	    	   SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT, 1, event4);
 
-	    	   printf("left\n");
+	printf("left\n");
 	printf("a\n");
 }
 if (Receive_Data == 98)
@@ -225,13 +225,13 @@ if (Receive_Data == 98)
 	printf("b\n");
 }
 if (Receive_Data == 100)
-{
-	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT,speed, event1);
-	        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,1, event2);
-	             SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT,speed, event3);
-	        	 SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT,1, event4);
+			{
+			SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FIRST_SCTIMER_OUT,speed, event1);
+	        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_SECOND_SCTIMER_OUT,1, event2);
+	        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_THIRD_SCTIMER_OUT,speed, event3);
+	        	SCTIMER_UpdatePwmDutycycle(SCT0,DEMO_FOURTH_SCTIMER_OUT,1, event4);
 
-	        	printf("go straight\n");
+printf("go straight\n");
 	printf("c\n");
 }
 if (Receive_Data == 102)
